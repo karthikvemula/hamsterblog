@@ -4,8 +4,8 @@ on: ["pull_request","push","workflow_dispatch"]
 env:
   AZURE_WEBAPP_NAME: 'GitHubWebAppKartheek'
   AZURE_WEBAPP_PACKAGE_PATH: '.'
-  #DOTNET_VERSION: '6.0.x' 
-  NETCORE_VERSION: '6.0.x'
+  DOTNET_VERSION: '6.0.x' 
+  #NETCORE_VERSION: '6.0.x'
   SUBSCRIPTION_ID: '1dcf29a6-50da-4c99-bf86-8afae12a57c1'
 jobs:
   build-and-deploy:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: ${{ env.NETCORE_VERSION }} 
+          dotnet-version: ${{ env.DOTNET_VERSION }} 
       
       # Run dotnet build and publish
       - name: dotnet build and publish
