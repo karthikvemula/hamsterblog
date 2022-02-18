@@ -1,51 +1,36 @@
-name: "DOT NET Build and Compile"
-
-
-
-on:
-workflow_dispatch:
-push:
-branches: [ master ]
+name: "build and deploys"
+on: ["pull_request","push","workflow_dispatch"]
 
 env:
-AZURE_WEBAPP_NAME: 'GitHubWebAppKartheek'
-AZURE_WEBAPP_PACKAGE_PATH: './published'
-NETCORE_VERSION: '6.0.x'
-SUBSCRIPTION_ID: '1dcf29a6-50da-4c99-bf86-8afae12a57c1'
-
+  AZURE_WEBAPP_NAME: 'GitHubWebAppKartheek'
+  AZURE_WEBAPP_PACKAGE_PATH: './published'
+  NETCORE_VERSION: '6.0.x'
+  SUBSCRIPTION_ID: '1dcf29a6-50da-4c99-bf86-8afae12a57c1'
 jobs:
-build:
-name: Build and Deploy on Ubuntu
-runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
 
-
-
-steps:
-- name: login to Azure
-uses: kartheekv@birlasoft.com/India@123
-with:
-creds: ${{ secrets.AZURE_CREDENTIALS }}
-- name: Set Default Subscription to ${{ env.SUBSCRIPTION_ID }} using Azure CLI
-uses: azure/CLI@v1
-with:
-azcliversion: 2.30.0
-inlineScript: |
-az account set --subscription ${{ env.SUBSCRIPTION_ID }}
-
-- uses: actions/checkout@v2
-- name: Setup .NET Core SDK ${{ env.NETCORE_VERSION }}
-uses: actions/setup-dotnet@v1
-with:
-dotnet-version: ${{ env.NETCORE_VERSION }}
-- name: Restore dependencies
-run: dotnet restore
-- name: Build
-run: dotnet build --no-restore
-- name: Publish App for Deploy
-run: dotnet publish --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-- name: 'Deploy to Azure WebApp'
-uses: azure/webapps-deploy@v2
-with:
-app-name: ${{ env.AZURE_WEBAPP_NAME }}
-publish-profie: ${{ secrets.webappsecret }}
-package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      # Checkout the repo
+      - uses: actions/checkout@master
+      
+      # Setup .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }} 
+      
+      # Run dotnet build and publish
+      - name: dotnet build and publish
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp' 
+          
+      # Deploy to Azure Web apps
+      - name: 'Run Azure webapp deploy action using publish profile credentials'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }} # Replace with your app name
+          publish-profile: ${{ secrets.webappsecret  }} # Define secret variable in repository settings as per action documentation
+          package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp'
