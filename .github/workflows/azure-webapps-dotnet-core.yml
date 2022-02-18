@@ -25,7 +25,6 @@ steps:
 uses: kartheekv@birlasoft.com/India@123
 with:
 creds: ${{ secrets.AZURE_CREDENTIALS }}
-
 - name: Set Default Subscription to ${{ env.SUBSCRIPTION_ID }} using Azure CLI
 uses: azure/CLI@master
 with:
