@@ -1,0 +1,52 @@
+name: .NET Build and Compile
+
+
+
+on:
+workflow_dispatch:
+push:
+branches: [ master ]
+
+env:
+AZURE_WEBAPP_NAME: 'GitHubWebAppDinesh'
+AZURE_WEBAPP_PACKAGE_PATH: './published'
+NETCORE_VERSION: '6.0.x'
+SUBSCRIPTION_ID: '4cd2d2ee-beef-4e6b-9e71-fd13814704a3'
+
+jobs:
+build:
+name: Build and Deploy on Ubuntu
+runs-on: ubuntu-latest
+
+
+
+steps:
+- name: login to Azure
+uses: azure/login@v1
+with:
+creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+- name: Set Default Subscription to ${{ env.SUBSCRIPTION_ID }} using Azure CLI
+uses: azure/CLI@v1
+with:
+azcliversion: 2.30.0
+inlineScript: |
+az account set --subscription ${{ env.SUBSCRIPTION_ID }}
+
+- uses: actions/checkout@v2
+- name: Setup .NET Core SDK ${{ env.NETCORE_VERSION }}
+uses: actions/setup-dotnet@v1
+with:
+dotnet-version: ${{ env.NETCORE_VERSION }}
+- name: Restore dependencies
+run: dotnet restore
+- name: Build
+run: dotnet build --no-restore
+- name: Publish App for Deploy
+run: dotnet publish --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+- name: 'Deploy to Azure WebApp'
+uses: azure/webapps-deploy@v2
+with:
+app-name: ${{ env.AZURE_WEBAPP_NAME }}
+publish-profie: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
