@@ -8,10 +8,10 @@ push:
 branches: [ master ]
 
 env:
-AZURE_WEBAPP_NAME: 'GitHubWebAppDinesh'
+AZURE_WEBAPP_NAME: 'GitHubWebAppKartheek'
 AZURE_WEBAPP_PACKAGE_PATH: './published'
 NETCORE_VERSION: '6.0.x'
-SUBSCRIPTION_ID: '4cd2d2ee-beef-4e6b-9e71-fd13814704a3'
+SUBSCRIPTION_ID: '1dcf29a6-50da-4c99-bf86-8afae12a57c1'
 
 jobs:
 build:
@@ -22,7 +22,7 @@ runs-on: ubuntu-latest
 
 steps:
 - name: login to Azure
-uses: azure/login@v1
+uses: kartheekv@birlasoft.com/India@123
 with:
 creds: ${{ secrets.AZURE_CREDENTIALS }}
 
