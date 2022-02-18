@@ -26,15 +26,15 @@ uses: kartheekv@birlasoft.com/India@123
 with:
 creds: ${{ secrets.AZURE_CREDENTIALS }}
 - name: Set Default Subscription to ${{ env.SUBSCRIPTION_ID }} using Azure CLI
-uses: azure/CLI@master
+uses: azure/CLI@v1
 with:
 azcliversion: 2.30.0
 inlineScript: |
 az account set --subscription ${{ env.SUBSCRIPTION_ID }}
 
-- uses: actions/checkout@master
+- uses: actions/checkout@v2
 - name: Setup .NET Core SDK ${{ env.NETCORE_VERSION }}
-uses: actions/setup-dotnet@master
+uses: actions/setup-dotnet@v1
 with:
 dotnet-version: ${{ env.NETCORE_VERSION }}
 - name: Restore dependencies
@@ -44,7 +44,7 @@ run: dotnet build --no-restore
 - name: Publish App for Deploy
 run: dotnet publish --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 - name: 'Deploy to Azure WebApp'
-uses: azure/webapps-deploy@master
+uses: azure/webapps-deploy@v2
 with:
 app-name: ${{ env.AZURE_WEBAPP_NAME }}
 publish-profie: ${{ secrets.webappsecret }}
