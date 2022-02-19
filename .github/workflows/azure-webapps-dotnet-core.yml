@@ -21,12 +21,13 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }} 
       #dotnet build --configuration Release
+      #dotnet build --no-restore
       #dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}' 
       # Run dotnet build and publish
       - name: dotnet build and publish
         run: |
           dotnet restore
-          dotnet build --no-restore 
+          dotnet build --configuration Release
           dotnet publish --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
           
       # Deploy to Azure Web apps
