@@ -28,7 +28,7 @@ jobs:
         run: |
           dotnet restore
           dotnet build --configuration Release
-          dotnet publish --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/published' --no-build -c Release
+          dotnet publish -o publish
           
       # Deploy to Azure Web apps
       - name: 'Run Azure webapp deploy action using publish profile credentials'
